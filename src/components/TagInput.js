@@ -54,6 +54,7 @@ export default class TagInput extends React.Component {
     // Adds entered tag when the input loses focus
     onFocusOut = (e) => {
         this.addTags(e.currentTarget.value)
+        e.currentTarget.value = ''
     }
 
     // Function that renders each tag
