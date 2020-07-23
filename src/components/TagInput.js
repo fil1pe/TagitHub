@@ -5,7 +5,7 @@ import XIcon from './bootstrap-icons/x-icon'
 export default class TagInput extends React.Component {
 
     state = {
-        tags: this.props.tags || []
+        tags: this.props.tags
     }
 
     // Function that adds tag
@@ -74,12 +74,6 @@ export default class TagInput extends React.Component {
                 </button>
             </div>
         })
-    }
-
-    // Function to set state when props change
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.tags !== this.props.tags)
-            this.setState({tags: nextProps.tags})
     }
 
     render() {
