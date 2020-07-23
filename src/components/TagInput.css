@@ -1,0 +1,23 @@
+.TagInput > div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.TagInput .tag {
+    display: flex;
+    align-items: center;
+}
+
+.TagInput .tag button {
+    background: none;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.TagInput input {
+    flex: 1 1 30%;
+    min-width: 30%;
+}
