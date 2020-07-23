@@ -1,0 +1,65 @@
+.Repo {
+    border-radius: 5px;
+    background-color: #ececec;
+    border: 1px solid #ececec;
+    overflow: hidden;
+    text-align: left;
+}
+
+.Repo > section {
+    padding: 8px;
+    width: calc(100% - 60px - 20px - 16px);
+    float: right;
+    background-color: #ffffff;
+}
+
+.Repo > section .title {
+    display: inline-block;
+    font-size: 12pt;
+    font-weight: bold;
+    text-decoration: none;
+    color: #46c0ec;
+    margin-bottom: 8px;
+}
+
+.Repo > section .description {
+    font-size: 10pt;
+    margin: 0 -8px;
+    padding: 0 8px 4px 8px;
+    border-bottom: 1px solid #ececec;
+}
+
+.Repo > section .tags-container {
+    padding-top: 4px;
+}
+
+.Repo > section .tags-form {
+    display: none;
+    padding-top: 4px;
+}
+
+.Repo > aside {
+    width: 60px;
+    float: left;
+    padding: 10px;
+    height: 100%;
+}
+
+.Repo > aside a {
+    display: block;
+    border-radius: 50%;
+    width: 100%;
+    padding-top: 100%;
+    background-size: 100%;
+}
+
+.Repo > aside div {
+    position: absolute;
+    padding: 4px;
+    margin-top: 2px;
+    border-radius: 4px;
+    background-color: #ffffff;
+    border: 1px solid #ececec;
+    font-size: 9pt;
+    display: none;
+}
