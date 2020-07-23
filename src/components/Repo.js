@@ -1,5 +1,4 @@
 import React, {useState} from 'react'
-import $ from 'jquery'
 import './Repo.css'
 import TagInput from './TagInput'
 import EditIcon from './bootstrap-icons/edit-icon'
@@ -50,7 +49,9 @@ export default props => {
         </section>
         <aside>
             <a href={profileURL} target="_blank" rel="noopener noreferrer" style={{backgroundImage: avatarURL}}
-               onMouseEnter={_ => setAuthorVisible(true)} onMouseLeave={_ => setAuthorVisible(false)} />
+               onMouseEnter={_ => setAuthorVisible(true)} onMouseLeave={_ => setAuthorVisible(false)}>
+                {author}
+            </a>
             { authorVisible ? <div>{author}</div> : false }
         </aside>
     </article>
