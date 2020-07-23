@@ -46,7 +46,6 @@
 }
 
 .Repo > section .tags-form {
-    display: none;
     padding-top: 4px;
 }
 
@@ -56,7 +55,7 @@
 }
 
 .Repo > section .tags-form * {
-    font-size: 14px;
+    font-size: 11pt;
 }
 
 .Repo .TagInput > div {
@@ -95,5 +94,4 @@
     background-color: #ffffff;
     border: 1px solid #ececec;
     font-size: 9pt;
-    display: none;
 }

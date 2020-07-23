@@ -31,7 +31,7 @@ export default class TagInput extends React.Component {
         let inputVal = e.currentTarget.value
         // Adds tag if user pressed any of these keys
         if ((e.keyCode === 32 /* space */ || e.keyCode === 188 /* comma */ || e.keyCode === 13 /* enter */)
-             && inputVal.trim() !== '') {
+            && inputVal.trim() !== '') {
             this.addTags(inputVal)
             e.currentTarget.value = ''
         }
@@ -66,14 +66,20 @@ export default class TagInput extends React.Component {
             this.setState({tags: tags})
         }
 
-        return this.state.tags.map(function(tag) {
+        return this.state.tags.map(function (tag) {
             return <div className="tag">
                 <span>{tag}</span>
                 <button onClick={() => removeTag(tag)}>
-                    <XIcon />
+                    <XIcon/>
                 </button>
             </div>
         })
+    }
+
+    // Function to set state when props change
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.tags !== this.props.tags)
+            this.setState({tags: nextProps.tags})
     }
 
     render() {

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import $ from 'jquery'
 import './Repo.css'
 import TagInput from './TagInput'
@@ -13,10 +13,15 @@ export default props => {
     let avatarURL = `url(${props.avatarURL})`
     let profileURL = `https://github.com/${author}`
     let repoURL = `${profileURL}/${title}`
-    let tags = props.tags || []
+    let tags = props.tags
 
-    let tagElements = tags.map(function (tag) {
-        return <button className="tag">
+    // If user clicks on edit button, setEditing hides tag container and shows form
+    const [editing, setEditing] = useState(false)
+    // If mouse enters avatar, setAuthorVisible shows author name
+    const [authorVisible, setAuthorVisible] = useState(false)
+
+    const tagElements = tags.map(function (tag) {
+        return <button className="tag" onClick={_ => props.tagOnClick(tag)}>
             {tag}
         </button>
     })
@@ -25,39 +30,28 @@ export default props => {
         <section>
             <a className="title" href={repoURL} target="_blank" rel="noopener noreferrer">{title}</a>
             <div className="description">{description}</div>
-            <div className="tags-container">
-                {tagElements}
-                <button className="edit" onClick={(e) => {
-                    // Hides tag container
-                    let tagsContainer = e.currentTarget.parentNode
-                    $(tagsContainer).css('display', 'none')
-                    // Shows form
-                    $(tagsContainer.parentNode).find('.tags-form').css('display', 'block')
-                }}>
-                    <EditIcon />
-                </button>
-            </div>
+            { editing ?
             <div className="tags-form">
                 <div>
-                    <TagInput placeholder="Add tags" tags={tags} >
+                    <TagInput placeholder="Add tags" tags={tags} onEnter={_ => {
+                        setEditing(false)
+                        props.saveTags(tags)
+                    }}>
                         <OkIcon />
                     </TagInput>
                 </div>
-            </div>
+            </div> :
+            <div className="tags-container">
+                {tagElements}
+                <button className="edit" onClick={_ => setEditing(true)}>
+                    <EditIcon />
+                </button>
+            </div> }
         </section>
         <aside>
             <a href={profileURL} target="_blank" rel="noopener noreferrer" style={{backgroundImage: avatarURL}}
-               onMouseEnter={(e) => {
-                   // Shows author name on mouse enter avatar
-                   let aside = e.currentTarget.parentNode
-                   $(aside).find('div').css('display', 'flex')
-               }}
-               onMouseLeave={(e) => {
-                   // Hides author name on mouse leave avatar
-                   let aside = e.currentTarget.parentNode
-                   $(aside).find('div').css('display', 'none')
-               }} />
-            <div>{author}</div>
+               onMouseEnter={_ => setAuthorVisible(true)} onMouseLeave={_ => setAuthorVisible(false)} />
+            { authorVisible ? <div>{author}</div> : false }
         </aside>
     </article>
 
