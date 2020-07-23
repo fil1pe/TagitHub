@@ -38,9 +38,11 @@ export default props => {
                 </button>
             </div>
             <div className="tags-form">
-                <TagInput placeholder="Add tags" tags={tags} >
-                    <OkIcon />
-                </TagInput>
+                <div>
+                    <TagInput placeholder="Add tags" tags={tags} >
+                        <OkIcon />
+                    </TagInput>
+                </div>
             </div>
         </section>
         <aside>

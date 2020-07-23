@@ -33,9 +33,43 @@
     padding-top: 4px;
 }
 
+.Repo > section .tags-container .tag {
+    background-color: #9cdaf0;
+    border: 1px solid #7cbae6;
+    padding: 3px;
+    margin: 4px 4px 0 0;
+    border-radius: 4px;
+}
+
+.Repo > section .tags-container .edit {
+    padding: 0;
+}
+
 .Repo > section .tags-form {
     display: none;
     padding-top: 4px;
+}
+
+.Repo > section .tags-form > div {
+    border: 1px solid #afafaf;
+    overflow: hidden;
+}
+
+.Repo > section .tags-form * {
+    font-size: 14px;
+}
+
+.Repo .TagInput > div {
+    padding: 0 0 5px 5px;
+}
+
+.Repo .TagInput .tag {
+    padding: 2px;
+    margin: 5px 5px 0 0;
+}
+
+.Repo .TagInput input {
+    padding: 8px 8px 3px 3px;
 }
 
 .Repo > aside {
