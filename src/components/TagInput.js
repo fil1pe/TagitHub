@@ -67,10 +67,10 @@ export default class TagInput extends React.Component {
 
         return this.state.tags.map(function(tag) {
             return <div className="tag">
+                <span>{tag}</span>
                 <button onClick={() => removeTag(tag)}>
                     <XIcon />
                 </button>
-                <span>{tag}</span>
             </div>
         })
     }
