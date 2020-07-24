@@ -49,7 +49,7 @@ app.get('/auth', (req, res) => {
 // Logout
 app.get('/logout', (req, res) => {
     if (req.session.accessToken === undefined)
-        return res.status(409).json({message: 'You are not authenticated!'})
+        return res.status(401).json({message: 'You are not authenticated!'})
     req.session.destroy()
     res.status(200).redirect(clientHost)
 })
