@@ -24,7 +24,11 @@ app.use(cors({
 }))
 
 // For sessions
-app.use(session({secret: secrets.SESSION_SECRET}))
+app.use(session({
+    secret: secrets.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
+}))
 
 // Authentication
 app.get('/login', (req, res) => {
