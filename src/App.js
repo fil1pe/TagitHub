@@ -11,6 +11,7 @@ import Octocat from './Professortocat_v2.png'
 import HomeIcon from './components/bootstrap-icons/home-icon'
 import ProfileIcon from './components/bootstrap-icons/profile-icon'
 import SearchIcon from './components/bootstrap-icons/search-icon'
+import Loading from './components/Loading'
 
 const serverHost = 'http://localhost:3001'
 const mutex = new Mutex()
@@ -166,8 +167,9 @@ export default class App extends React.Component {
 
     // Function to show or hide loading animation
     setLoading(visible) {
-        let display = visible ? 'flex' : 'none'
-        $('#Loading-container').css('display', display)
+        const LoadingSingleton = Loading.instance
+        if (LoadingSingleton !== null)
+            LoadingSingleton.setVisible(visible)
     }
 
     render() {
