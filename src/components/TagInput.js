@@ -18,11 +18,10 @@ export default class TagInput extends React.Component {
 
     // Function that adds trimmed tags from 'str' separated by space or commas
     addTags(str) {
-        const addTag = this.addTag.bind(this)
-        str.split(/[\s,]+/).forEach(function (item) {
+        str.split(/[\s,]+/).forEach((item) => {
             let tag = item.trim()
             if (tag !== '')
-                addTag(tag)
+                this.addTag(tag)
         })
     }
 
@@ -61,13 +60,12 @@ export default class TagInput extends React.Component {
     renderTags() {
         // Function to handle click on remove buttons
         let removeTag = (tag) => {
-            let tags = [...this.state.tags]
-            tags.splice(tags.indexOf(tag), 1)
-            this.setState({tags: tags})
+            this.state.tags.splice(this.state.tags.indexOf(tag), 1)
+            this.forceUpdate()
         }
 
-        return this.state.tags.map(function (tag) {
-            return <div className="tag">
+        return this.state.tags.map(function (tag, index) {
+            return <div className="tag" key={tag}>
                 <span>{tag}</span>
                 <button onClick={() => removeTag(tag)}>
                     <XIcon/>
@@ -80,7 +78,8 @@ export default class TagInput extends React.Component {
         return <div className="TagInput">
             <div>
                 {this.renderTags()}
-                <input type="text" placeholder={this.props.placeholder} onKeyUp={this.onKeyUp} onKeyDown={this.onKeyDown} onBlur={this.onFocusOut} />
+                <input type="text" placeholder={this.props.placeholder} onKeyUp={this.onKeyUp}
+                       onKeyDown={this.onKeyDown} onBlur={this.onFocusOut}/>
             </div>
             <button onClick={() => this.props.onEnter(this.state.tags)}>
                 {this.props.children}

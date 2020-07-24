@@ -19,8 +19,8 @@ export default props => {
     // If mouse enters avatar, setAuthorVisible shows author name
     const [authorVisible, setAuthorVisible] = useState(false)
 
-    const tagElements = tags.map(function (tag) {
-        return <button className="tag" onClick={_ => props.tagOnClick(tag)}>
+    const tagElements = tags.map(function (tag, index) {
+        return <button key={index} className="tag" onClick={() => props.tagOnClick(tag)}>
             {tag}
         </button>
     })
@@ -29,30 +29,30 @@ export default props => {
         <section>
             <a className="title" href={repoURL} target="_blank" rel="noopener noreferrer">{title}</a>
             <div className="description">{description}</div>
-            { editing ?
-            <div className="tags-form">
-                <div>
-                    <TagInput placeholder="Add tags" tags={tags} onEnter={_ => {
-                        setEditing(false)
-                        props.saveTags(tags)
-                    }}>
-                        <OkIcon />
-                    </TagInput>
-                </div>
-            </div> :
-            <div className="tags-container">
-                {tagElements}
-                <button className="edit" onClick={_ => setEditing(true)}>
-                    <EditIcon />
-                </button>
-            </div> }
+            {editing ?
+                <div className="tags-form">
+                    <div>
+                        <TagInput placeholder="Add tags" tags={tags} onEnter={() => {
+                            setEditing(false)
+                            props.saveTags(tags)
+                        }}>
+                            <OkIcon/>
+                        </TagInput>
+                    </div>
+                </div> :
+                <div className="tags-container">
+                    {tagElements}
+                    <button className="edit" onClick={() => setEditing(true)}>
+                        <EditIcon/>
+                    </button>
+                </div>}
         </section>
         <aside>
             <a href={profileURL} target="_blank" rel="noopener noreferrer" style={{backgroundImage: avatarURL}}
-               onMouseEnter={_ => setAuthorVisible(true)} onMouseLeave={_ => setAuthorVisible(false)}>
+               onMouseEnter={() => setAuthorVisible(true)} onMouseLeave={() => setAuthorVisible(false)}>
                 {author}
             </a>
-            { authorVisible ? <div>{author}</div> : false }
+            {authorVisible ? <div>{author}</div> : false}
         </aside>
     </article>
 
