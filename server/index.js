@@ -14,6 +14,7 @@ const app = express()
 const port = 3001
 const clientHost = 'http://localhost:3000'
 
+// For POST and PUT
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -35,6 +36,7 @@ app.get('/login', (req, res) => {
     res.status(200).redirect(`https://github.com/login/oauth/authorize?client_id=${clientId}`)
 })
 
+// Authentication callback function
 app.get('/auth', (req, res) => {
     axios.post('https://github.com/login/oauth/access_token', {
         client_id: clientId, client_secret: clientSecret, code: req.query.code
@@ -45,8 +47,7 @@ app.get('/auth', (req, res) => {
     }).catch(err => res.status(500).json({message: err.message}))
 })
 
-
-// Logout
+// Route to log out
 app.get('/logout', (req, res) => {
     if (req.session.accessToken === undefined)
         return res.status(401).json({message: 'You are not authenticated!'})
@@ -67,7 +68,7 @@ app.get('/user', (req, res) => {
     )
 })
 
-// Function that fetches user's starred repositories
+// Function that fetches a page of user's starred repositories
 async function repos(accessToken, page) {
     let [repos, time] = database.getRepos(accessToken, page)
     if (repos !== undefined && new Date().getTime() - time <= 3600000)
@@ -87,7 +88,7 @@ async function repos(accessToken, page) {
     return fetchedRepos
 }
 
-// Function that returns if at least one tag contains a searched string
+// Function that returns true if at least one tag contains a searched string
 function filter(search, tags) {
     if (search.length === 0)
         return true
@@ -98,7 +99,7 @@ function filter(search, tags) {
     return false
 }
 
-// Function to get a page of tagged repositories
+// Function to get a page of starred repositories based on tag search
 async function taggedRepos(accessToken, page, search) {
     let res = []
 
