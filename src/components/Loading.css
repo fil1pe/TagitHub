@@ -1,0 +1,24 @@
+@keyframes circular {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+#Loading-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1;
+    background-color: rgba(100, 100, 100, 0.1);
+    align-items: center;
+}
+
+#Loading-container div {
+    animation: circular 0.7s linear infinite;
+    background-image: url("loading.png");
+    background-size: 100%;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+}

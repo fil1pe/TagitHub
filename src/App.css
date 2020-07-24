@@ -36,6 +36,7 @@ input:focus {
     min-height: 100vh;
     position: relative;
     padding-bottom: calc(45px + 50px);
+    z-index: 0;
 }
 
 nav {

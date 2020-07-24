@@ -27,12 +27,18 @@ export default class App extends React.Component {
         endOfSearch: false
     }
 
+    // Function that waits 'time' ms (useful for animation)
+    sleep(time) {
+        return new Promise(resolve => setTimeout(resolve, time));
+    }
+
     // Function that fetches login data from the server
     async fetchLogin() {
         const release = await mutex.acquire()
 
         try {
 
+            this.setLoading(true)
             let username = await Axios.get(`${serverHost}/user`, {withCredentials: true})
                 .then(res => res.data.username)
                 .catch(err => {
@@ -46,6 +52,7 @@ export default class App extends React.Component {
             console.log(err)
         } finally {
             release()
+            this.setLoading(false)
         }
     }
 
@@ -58,6 +65,8 @@ export default class App extends React.Component {
             // If no user is logged in or end of search has been reached, it will not try to fetch data
             if (this.state.endOfSearch || this.state.username === undefined || this.state.username === '')
                 return
+
+            this.setLoading(true)
 
             let data = await Axios.get(
                 `${serverHost}/repos?page=${this.state.nextPage}&tags=${this.state.currentSearch.join(',')}`,
@@ -78,6 +87,8 @@ export default class App extends React.Component {
             console.log(err)
         } finally {
             release()
+            await this.sleep(300)
+            this.setLoading(false)
         }
     }
 
@@ -87,12 +98,15 @@ export default class App extends React.Component {
 
         try {
 
+            this.setLoading(true)
             await Axios.put(`${serverHost}/repos/${author}/${title}`, {tags: tags}, {withCredentials: true})
 
         } catch (err) {
             console.log(err)
         } finally {
             release()
+            await this.sleep(300)
+            this.setLoading(false)
         }
     }
 
@@ -148,6 +162,12 @@ export default class App extends React.Component {
                 this.send(item.title, item.author, tags)
             }/>
         })
+    }
+
+    // Function to show or hide loading animation
+    setLoading(visible) {
+        let display = visible ? 'flex' : 'none'
+        $('#Loading-container').css('display', display)
     }
 
     render() {
