@@ -40,6 +40,7 @@ export default class App extends React.Component {
         try {
 
             this.setLoading(true)
+
             let username = await Axios.get(`${serverHost}/user`, {withCredentials: true})
                 .then(res => res.data.username)
                 .catch(err => {
@@ -53,6 +54,7 @@ export default class App extends React.Component {
             console.log(err)
         } finally {
             release()
+            await this.sleep(300)
             this.setLoading(false)
         }
     }
@@ -84,14 +86,12 @@ export default class App extends React.Component {
 
             this.setState({data: data, nextPage: nextPage, alert: _alert, endOfSearch: endOfSearch})
 
-            await this.sleep(300)
-            this.setLoading(false)
-
         } catch (err) {
             console.log(err)
-            this.setLoading(false)
         } finally {
             release()
+            await this.sleep(300)
+            this.setLoading(false)
         }
     }
 
