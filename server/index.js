@@ -44,6 +44,8 @@ app.get('/auth', (req, res) => {
 
 // Logout
 app.get('/logout', (req, res) => {
+    if (req.session.accessToken === undefined)
+        return res.status(409).json({message: 'You are not authenticated!'})
     req.session.destroy()
     res.status(200).redirect(clientHost)
 })
@@ -119,9 +121,23 @@ app.get('/repos', (req, res) => {
     if (req.session.accessToken === undefined)
         return res.status(401).json({message: 'Authenticate!'})
 
-    let tags = req.query.tags !== undefined && req.query.tags !== '' ? req.query.tags.split(/[\s,]+/) : []
+    let tagStr = req.query.tags
+    let tags = []
+    if (tagStr !== undefined && tagStr !== '') {
+        tags = tagStr.split(/[\s,]+/)
+        let valid = true
+        for (let i in tags)
+            valid &= /^[A-Za-z0-9]+$/.test(tags[i])
+        if (!valid)
+            return res.status(422).json({message: 'Tags must be non-empty alphanumericals!'})
+    }
 
-    taggedRepos(req.session.accessToken, req.query.page || 1, tags).then(repos => {
+    let page = parseInt(req.query.page) || 1
+
+    if (page < 1)
+        return res.status(422).json({message: 'Page must be >= 1!'})
+
+    taggedRepos(req.session.accessToken, page, tags).then(repos => {
         res.status(200).json(repos)
     }).catch(err =>
         res.status(500).json({message: err.message})
@@ -133,8 +149,15 @@ app.put('/repos/:author/:title', (req, res) => {
     if (req.session.accessToken === undefined)
         res.status(401).json({message: 'Authenticate!'})
     try {
-        database.setTags(req.params.title, req.params.author, req.session.accessToken, req.body.tags)
-        res.status(200).json({ok: true})
+        let tags = req.body.tags
+        let valid = true
+        for (let i in tags)
+            valid &= /^[A-Za-z0-9]+$/.test(tags[i])
+        if (valid) {
+            database.setTags(req.params.title, req.params.author, req.session.accessToken, tags)
+            res.status(200).json({ok: true})
+        } else
+            res.status(422).json({message: 'Tags must be non-empty alphanumericals!'})
     } catch (err) {
         res.status(500).json({message: err.message})
     }

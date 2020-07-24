@@ -20,7 +20,8 @@ export default class TagInput extends React.Component {
     addTags(str) {
         str.split(/[\s,]+/).forEach((item) => {
             let tag = item.trim()
-            if (tag !== '')
+            // Checks if string is not empty and contains only numbers and letters
+            if (/^[A-Za-z0-9]+$/.test(tag))
                 this.addTag(tag)
         })
     }
