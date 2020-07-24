@@ -1,5 +1,7 @@
 import React from 'react'
 import $ from 'jquery'
+import Axios from 'axios'
+import {Mutex} from 'async-mutex';
 import 'bootstrap/dist/js/bootstrap.js'
 import 'bootstrap/dist/css/bootstrap.css'
 import './App.css'
@@ -11,6 +13,7 @@ import ProfileIcon from './components/bootstrap-icons/profile-icon'
 import SearchIcon from './components/bootstrap-icons/search-icon'
 
 const serverHost = 'http://localhost:3001'
+const mutex = new Mutex()
 
 export default class App extends React.Component {
 
@@ -19,35 +22,50 @@ export default class App extends React.Component {
         search: [],         // search tags waiting for search event
         currentSearch: [],  // search tags applied to the current search
         data: [],
-        nextPage: 0,
+        nextPage: 1,
         alert: '',
         endOfSearch: false
     }
 
     // Function that fetches login data from the server
-    fetchLogin() {
-        this.setState({username: 'fil1pe'})
+    async fetchLogin() {
+        const release = await mutex.acquire()
+
+        let username = await Axios.get(`${serverHost}/user`, {withCredentials: true})
+        .then(res => res.data.username)
+        .catch(err => {
+            this.setState({alert: err.message})
+            return ''
+        })
+
+        release()
+
+        this.setState({username: username}, this.fetchRepos)
     }
 
     // Function that fetches repository data from the server
-    fetchRepos() {
-        if (this.state.endOfSearch)
+    async fetchRepos() {
+        // If no user is logged in or end of search has been reached, it will not try to fetch data
+        if (this.state.endOfSearch || this.state.username === undefined || this.state.username === '')
             return
 
-        let data = this.state.data
-        for(let i=0; i<20; i++)
-            data.push({title: 'some-repository', description: 'the repository description', author: 'fil1pe',
-               avatarURL: 'https://avatars3.githubusercontent.com/u/42271005?s=460&u=7836a601aabb4188d5b3810b394fe2c42b5f72d0&v=4',
-               tags: ['tag1', 'tag2']})
+        const release = await mutex.acquire()
 
-        let alertText = ''
-        let nextPage = this.state.nextPage + 1
-        if (data.length === 0) {
-            alertText = 'No repositories found.'
-            nextPage = 0
-        }
+        let data = await Axios.get(
+            `${serverHost}/repos?page=${this.state.nextPage}&tags=${this.state.currentSearch.join(',')}`,
+        {withCredentials: true})
+        .then(res => res.data).catch(err => {
+            return []
+        })
 
-        this.setState({data: data, nextPage: nextPage, alert: alertText})
+        // End of search is reached when fetched data length is less than a page length (30)
+        let endOfSearch = data.length < 30
+        let nextPage = endOfSearch ? this.state.nextPage : this.state.nextPage + 1
+        data = this.state.data.concat(data)
+        let _alert = data.length === 0 ? 'No repositories found' : ''
+
+        this.setState({data: data, nextPage: nextPage, alert: _alert, endOfSearch: endOfSearch},
+            () => release())
     }
 
     // Function to be called as the component did mount
@@ -82,7 +100,7 @@ export default class App extends React.Component {
         if (this.state.username === '')
             this.setState({alert: 'You must sign in to search your repositories.'})
         else if (this.state.username !== undefined) {
-            this.setState({currentSearch: this.state.search, data: [], nextPage: 0, alert: '', endOfSearch: false},
+            this.setState({currentSearch: this.state.search, data: [], nextPage: 1, alert: '', endOfSearch: false},
                () => this.fetchRepos())
         }
     }
