@@ -13,7 +13,7 @@ export default class Loading extends React.Component {
         super(props)
 
         if (Loading.instance !== null)
-            throw "Loading singleton instance already exists"
+            throw new Error("Loading singleton instance already exists")
 
         Loading.instance = this
     }
