@@ -1,12 +1,16 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # IDE
-.idea
+/.idea
 
 # dependencies
 /node_modules
+/server/node_modules
 /.pnp
 .pnp.js
+
+# GitHub secrets
+/server/secrets.js
 
 # testing
 /coverage
