@@ -81,7 +81,7 @@ export default class App extends React.Component {
             // End of search is reached when fetched data length is less than a page length (30)
             let endOfSearch = data.length < 30
             let nextPage = endOfSearch ? this.state.nextPage : this.state.nextPage + 1
-            data = data.concat(this.state.data)
+            data = this.state.data.concat(data)
             let _alert = data.length === 0 ? 'No repositories found' : ''
 
             this.setState({data: data, nextPage: nextPage, alert: _alert, endOfSearch: endOfSearch})
