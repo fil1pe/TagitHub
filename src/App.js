@@ -44,7 +44,7 @@ export default class App extends React.Component {
             let username = await Axios.get(`${serverHost}/user`, {withCredentials: true})
                 .then(res => res.data.username)
                 .catch(err => {
-                    //this.setState({alert: err.message})
+                    this.setState({alert: err.message})
                     return ''
                 })
 
