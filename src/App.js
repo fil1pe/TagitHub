@@ -103,6 +103,9 @@ export default class App extends React.Component {
 
             this.setLoading(true)
             await Axios.put(`${serverHost}/repos/${author}/${title}`, {tags: tags}, {withCredentials: true})
+                .catch(err => {
+                    console.log(err)
+                })
 
         } catch (err) {
             console.log(err)
