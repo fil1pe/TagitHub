@@ -11,8 +11,8 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const app = express()
 
-const port = 3001
-const clientHost = 'http://localhost:3000'
+const port = process.argv.length >= 4 ? process.argv[3] : 80
+const clientHost = process.argv.length >= 3 ? process.argv[2] : 'http://localhost:3000'
 
 // For POST and PUT
 app.use(bodyParser.json());
@@ -110,11 +110,8 @@ async function taggedRepos(accessToken, page, search) {
         for (let i in data) {
             let tags = database.getTags(data[i].title, data[i].author, accessToken)
             if (filter(search, tags))
-                if (count++ >= 30 * page - 30) {
-                    let copy = {...data[i]}
-                    copy.tags = tags
-                    res.push(copy)
-                }
+                if (count++ >= 30 * (page - 1))
+                    res.push({...data[i], tags: tags})
         }
     }
 
@@ -138,7 +135,6 @@ app.get('/repos', (req, res) => {
     }
 
     let page = parseInt(req.query.page) || 1
-
     if (page < 1)
         return res.status(422).json({message: 'Page must be >= 1!'})
 
@@ -169,5 +165,6 @@ app.put('/repos/:author/:title', (req, res) => {
 })
 
 app.listen(port, function () {
+    console.log(`Client host: ${clientHost}`)
     console.log(`Server running on port ${port}`)
 })
