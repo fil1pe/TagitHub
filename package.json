@@ -9,14 +9,17 @@
     "async-mutex": "^0.2.4",
     "axios": "^0.19.2",
     "bootstrap": "^4.5.0",
+    "express": "^4.17.1",
+    "express-favicon": "^2.0.1",
     "jquery": "^3.5.1",
+    "path": "^0.12.7",
     "popper.js": "^1.16.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "node server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -39,5 +42,8 @@
   "devDependencies": {
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2"
+  },
+  "engines": {
+    "node": "12.13.1"
   }
 }
