@@ -30,6 +30,11 @@ input:focus {
     border: none;
 }
 
+.alert a {
+    color: inherit;
+    font-weight: bold;
+}
+
 #root {
     margin: 0 auto;
     max-width: 900px;

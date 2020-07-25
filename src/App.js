@@ -44,7 +44,7 @@ export default class App extends React.Component {
             let username = await Axios.get(`${serverHost}/user`, {withCredentials: true})
                 .then(res => res.data.username)
                 .catch(err => {
-                    this.setState({alert: err.message})
+                    //this.setState({alert: err.message})
                     return ''
                 })
 
@@ -215,7 +215,11 @@ export default class App extends React.Component {
                 </div>
             </header>
             <section>
-                {this.state.alert === '' ? false :
+                {this.state.alert === '' ? (this.state.username === '' ?
+                    <div className="alert alert-info" role="alert">
+                        TagitHub allows you to tag and search your starred repositories from GitHub. Start by giving
+                        some repos a star and <a href={`${serverHost}/login`}>sign in</a>!
+                    </div> : false) :
                     <div className="alert alert-warning" role="alert">
                         {this.state.alert}
                     </div>}
