@@ -13,7 +13,6 @@ import ProfileIcon from './components/bootstrap-icons/profile-icon'
 import SearchIcon from './components/bootstrap-icons/search-icon'
 import Loading from './components/Loading'
 
-const serverHost = 'https://tagithub.herokuapp.com'
 const mutex = new Mutex()
 
 export default class App extends React.Component {
@@ -41,7 +40,7 @@ export default class App extends React.Component {
 
             this.setLoading(true)
 
-            let username = await Axios.get(`${serverHost}/user`, {withCredentials: true})
+            let username = await Axios.get(`/user`, {withCredentials: true})
                 .then(res => res.data.username)
                 .catch(err => {
                     this.setState({alert: err.message})
@@ -71,7 +70,7 @@ export default class App extends React.Component {
             this.setLoading(true)
 
             let data = await Axios.get(
-                `${serverHost}/repos?page=${this.state.nextPage}&tags=${this.state.currentSearch.join(',')}`,
+                `/repos?page=${this.state.nextPage}&tags=${this.state.currentSearch.join(',')}`,
                 {withCredentials: true})
                 .then(res => res.data).catch(err => {
                     return []
@@ -101,7 +100,7 @@ export default class App extends React.Component {
         try {
 
             this.setLoading(true)
-            await Axios.put(`${serverHost}/repos/${author}/${title}`, {tags: tags}, {withCredentials: true})
+            await Axios.put(`/repos/${author}/${title}`, {tags: tags}, {withCredentials: true})
                 .catch(err => {
                     console.log(err)
                 })
@@ -192,7 +191,7 @@ export default class App extends React.Component {
                         </button>
                         {this.state.username === '' || this.state.username === undefined ?
                             <div className="dropdown-menu dropdown-menu-right">
-                                <a className="dropdown-item" href={`${serverHost}/login`}>
+                                <a className="dropdown-item" href="/login">
                                     Sign in with GitHub
                                 </a>
                             </div> :
@@ -201,7 +200,7 @@ export default class App extends React.Component {
                                    target="_blank" rel="noopener noreferrer">
                                     Go to your page
                                 </a>
-                                <a className="dropdown-item" href={`${serverHost}/logout`}>Sign out</a>
+                                <a className="dropdown-item" href="/logout">Sign out</a>
                             </div>}
                     </div>
                 </nav>
@@ -219,7 +218,7 @@ export default class App extends React.Component {
                 {this.state.alert === '' ? (this.state.username === '' ?
                     <div className="alert alert-info" role="alert">
                         TagitHub allows you to tag and search your starred repositories from GitHub. Start by giving
-                        some repos a star and <a href={`${serverHost}/login`}>sign in</a>!
+                        some repos a star and <a href="/login">sign in</a>!
                     </div> : false) :
                     <div className="alert alert-warning" role="alert">
                         {this.state.alert}
