@@ -19,11 +19,13 @@ export default props => {
     // If mouse enters avatar, setAuthorVisible shows author name
     const [authorVisible, setAuthorVisible] = useState(false)
 
-    const tagElements = tags.map(function (tag, index) {
-        return <button key={index} className="tag" onClick={() => props.tagOnClick(tag)}>
-            {tag}
-        </button>
-    })
+    const tagElements = tags.length === 0 ?
+        <i>No tag</i> :
+        tags.map(function (tag, index) {
+            return <button key={index} className="tag" onClick={() => props.tagOnClick(tag)}>
+                {tag}
+            </button>
+        })
 
     return <article className="Repo">
         <section>
