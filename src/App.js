@@ -53,9 +53,6 @@ export default class App extends React.Component {
         } catch (err) {
             console.log(err)
         } finally {
-            await this.sleep(300)
-            this.setLoading(false)
-            this.setLoading(false)
             release()
         }
     }
