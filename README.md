@@ -1,6 +1,6 @@
 # [TagitHub]
 
-[TagitHub] is a web app for tagging starred repositories from GitHub. Users can star their favorite repositories, and [TagitHub] will retrieve their information allowing adding them tags. Tags make it possible to reach repositories data—such as title, description and URL—through disjunctive patterns.
+[TagitHub] is a web app for tagging starred repositories from [GitHub]. Users can star their favorite repositories, and TagitHub will retrieve their information allowing adding them tags. Tags make it possible to reach repositories data—such as title, description and URL—through disjunctive patterns.
 
 ![TagitHub example](https://github.com/fil1pe/TagitHub/blob/master/screen.gif)
 
@@ -25,9 +25,9 @@ plus a bunch of [node.js] packages and some design tools.
 
 ## Usage
 
-As pointed earlier, start by starring some repositories on [GitHub]. Then lead to [TagitHub] to sign in, authenticate with your GitHub credentials and authorize [TagitHub]. You must be redirected to a page where you can see all your starred repositories. If you are not able to reach some of them, scroll down the page, and it must update with new data.
+As pointed earlier, start by starring some repositories on [GitHub]. Then lead to [TagitHub] to sign in, authenticate with your GitHub credentials and authorize TagitHub. You must be redirected to a page where you can see all your starred repositories. If you are not able to reach some of them, scroll down the page, and it must update with new data.
 
-For tagging click on the pencil-like button inside the tag section of the repository you want to tag. A input must appear. Insert your tags separated by comma or space and press enter. Notice that [TagitHub] allows only alphanumeric tags.
+For tagging click on the pencil-like button inside the tag section of the repository you want to tag. A input must appear. Insert your tags separated by comma or space and press enter. Notice that TagitHub allows only alphanumeric tags.
 
 Now you can search for repositories based on the tags you have just added! For that click on the tag buttons inside the similar repositories or use the search input in the header.
 
@@ -121,9 +121,22 @@ PUT /repos/:author/:title
 
 Changes the tags of a given repository using the json array named tags inside the request body.
 
-## Do not try to run it!
+## In case you want to run it
 
-The app requires secret information that is not included in this repository, such as GitHub API keys.
+The app requires secret information that is not included in this repository, such as GitHub API keys. In order to run it locally, you have to register a GitHub OAuth app, modify variable clientHosts in server.js and edit a new file secrets.js like the following:
+
+~~~javascript
+module.exports = {
+    CLIENT_ID: 'GitHub client ID',
+    CLIENT_SECRET: 'GitHub client secret',
+    SESSION_SECRET: 'session secret',
+    DB_HOST: 'database host',
+    DB_USER: 'database user',
+    DB_PASSWORD: 'database password',
+    DB_NAME: 'database name',
+    DB_PORT: 'database port'
+}
+~~~
 
 ## Database
 
