@@ -9,9 +9,6 @@
 /.pnp
 .pnp.js
 
-# GitHub secrets
-/server/secrets.js
-
 # testing
 /coverage
 
@@ -28,3 +25,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# secrets
+secrets.js
