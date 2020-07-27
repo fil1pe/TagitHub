@@ -2,6 +2,8 @@
 
 [TagitHub] is a web app for tagging starred repositories from GitHub. Users can star their favorite repositories, and [TagitHub] will retrieve their information allowing adding them tags. Tags make it possible to reach repositories data—such as title, description and URL—through disjunctive patterns.
 
+![TagitHub example](https://github.com/fil1pe/TagitHub/blob/master/screen.gif)
+
 ## Important!
 
 [TagitHub] caches your starred repositories information for one hour due to GitHub API's rate limits. Be sure to have them in your account before accessing it!
