@@ -133,10 +133,12 @@ export default class App extends React.Component {
             this.fetchLogin()
 
         // Data from next pages shall be fetched as user scrolls to the bottom
-        window.addEventListener("scroll", () => {
+        let onScroll = () => {
             if ($(window).scrollTop() + $(window).height() === $(document).height())
                 this.fetchRepos()
-        })
+        }
+        window.addEventListener("scroll", onScroll)
+        window.addEventListener("touchmove", onScroll)
     }
 
     // Function to handle search event
