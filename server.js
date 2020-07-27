@@ -2,13 +2,12 @@ const secrets = require('./secrets')
 const clientId = secrets.CLIENT_ID
 const clientSecret = secrets.CLIENT_SECRET
 
-const database = require('./database')
-
 const express = require('express')
 const session = require('express-session')
 const axios = require('axios')
 const path = require('path')
 const bodyParser = require('body-parser')
+const mysql = require('mysql')
 const app = express()
 
 const port = process.env.PORT || 8080
@@ -28,6 +27,18 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }))
+
+// For MySQL database
+const connection = mysql.createConnection({
+    host: secrets.DB_HOST,
+    port: secrets.DB_PORT,
+    user: secrets.DB_USER,
+    password: secrets.DB_PASSWORD,
+    database: secrets.DB_NAME
+})
+connection.connect((err) => {
+    if (err) throw err
+})
 
 // Authentication
 app.get('/login', (req, res) => {
@@ -71,11 +82,69 @@ app.get('/user', (req, res) => {
     )
 })
 
+// Database functions:
+
+// Gets the stored information about repository page
+function dbGetRepos(username, page) {
+    let sql = `SELECT * FROM repos WHERE user = '${username}' ORDER BY id ASC LIMIT 30 OFFSET ${30 * (page - 1)}`
+
+    return new Promise((resolve, reject) => {
+        connection.query(sql, (error, results, fields) => {
+            resolve(results)
+        })
+    })
+}
+
+// Stores some information about a repository
+function dbSaveRepo(repo, username) {
+    let sql = `SELECT * FROM repos WHERE user = '${username}' AND author = '${repo.author}' AND title = '${repo.title}'`
+    let tags = repo.tags === undefined ? [] : repo.tags
+    if (repo.description === null)
+        repo.description = ''
+
+    return new Promise((resolve, reject) => {
+        connection.query(sql, (error, results, fields) => {
+            if (results.length === 0) {
+                sql = `INSERT INTO repos(user, title, description, author, avatarURL, tags, time) VALUES ('${username}', '${repo.title}', '${repo.description}', '${repo.author}', '${repo.avatarURL}', '${tags.join(',')}', ${new Date().getTime()})`
+            } else {
+                console.log(results[0].id)
+                sql = `UPDATE repos SET description = '${repo.description}', avatarURL = '${repo.avatarURL}', time = ${new Date().getTime()} WHERE id = ${results[0].id}`
+            }
+            connection.query(sql, (error, results, fields) => {
+                resolve()
+            })
+        })
+    })
+}
+
+// Saves some information about a list of repositories
+async function dbSaveRepos(repos, username) {
+    let promises = []
+    for (let i in repos) {
+        promises.push(dbSaveRepo(repos[i], username))
+    }
+    await Promise.all(promises)
+}
+
+// Tags a repository
+function dbTagRepo(repoAuthor, repoTitle, username, tags) {
+    let sql = `UPDATE repos SET tags = '${tags.join(',')}' WHERE user = '${username}' AND author = '${repoAuthor}' AND title = '${repoTitle}'`
+    return new Promise((resolve, reject) => {
+        connection.query(sql, (error, results, fields) => {
+            resolve()
+        })
+    })
+}
+
+
 // Function that fetches a page of user's starred repositories
-async function repos(accessToken, username, page) {
-    let [repos, time] = database.getRepos(username, page)
-    if (repos !== undefined && new Date().getTime() - time <= 3600000)
+async function getRepos(accessToken, username, page) {
+    let repos = await dbGetRepos(username, page)
+    if (repos.length > 0 && new Date().getTime() - repos[0].time <= 3600000) {
+        for (let i in repos)
+            repos[i].tags = repos[i].tags !== '' ? repos[i].tags.split(',') : []
         return repos
+    }
 
     let fetchedRepos = await axios.get(
         `https://api.github.com/user/starred?access_token=${accessToken}&page=${page}&per_page=30`)
@@ -87,8 +156,13 @@ async function repos(accessToken, username, page) {
                 }
             })
         )
-    database.saveRepos(fetchedRepos, username, page)
-    return fetchedRepos
+
+    if (fetchedRepos.length === 0)
+        return []
+
+    await dbSaveRepos(fetchedRepos, username)
+
+    return await getRepos(accessToken, username, page)
 }
 
 // Function that returns true if at least one tag contains a searched string
@@ -97,22 +171,22 @@ function filter(search, tags) {
         return true
     for (let i in search)
         for (let j in tags)
-            if (tags[j].includes(search[i]))
+            if (tags[j].toLowerCase().includes(search[i].toLowerCase()))
                 return true
     return false
 }
 
 // Function to get a page of starred repositories based on tag search
-async function taggedRepos(accessToken, page, search) {
+async function getTaggedRepos(accessToken, page, search) {
     let username = await getUsername(accessToken)
     let res = []
 
     let len = 30, startPage = 1, count = 0, resLength = 0
     while (resLength < 30 && len === 30) {
-        let data = await repos(accessToken, username, startPage++)
+        let data = await getRepos(accessToken, username, startPage++)
         len = data.length
         for (let i in data) {
-            let tags = database.getTags(data[i].title, data[i].author, username)
+            let tags = data[i].tags
             if (filter(search, tags))
                 if (count++ >= 30 * (page - 1)) {
                     res.push({...data[i], tags: tags})
@@ -145,7 +219,7 @@ app.get('/repos', (req, res) => {
     if (page < 1)
         return res.status(422).json({message: 'Page must be >= 1!'})
 
-    taggedRepos(req.session.accessToken, page, tags).then(repos => {
+    getTaggedRepos(req.session.accessToken, page, tags).then(repos => {
         res.status(200).json(repos)
     }).catch(err =>
         res.status(500).json({message: err.message})
@@ -162,12 +236,12 @@ app.put('/repos/:author/:title', (req, res) => {
         for (let i in tags)
             valid &= /^[A-Za-z0-9]+$/.test(tags[i])
         if (valid) {
-            getUsername(req.session.accessToken).then(username => {
-                database.setTags(req.params.title, req.params.author, username, tags)
-                res.status(200).json({ok: true})
-            }).catch(err => {
-                res.status(500).json({message: err.message})
-            })
+            getUsername(req.session.accessToken).then(username =>
+                dbTagRepo(req.params.author, req.params.title, username, tags))
+                .then(() => res.status(200).json({ok: true}))
+                .catch(err => {
+                    res.status(500).json({message: err.message})
+                })
         } else
             res.status(422).json({message: 'Tags must be non-empty alphanumericals!'})
     } catch (err) {
