@@ -40,7 +40,7 @@ export default class App extends React.Component {
 
             this.setLoading(true)
 
-            let username = await Axios.get(`/user`, {withCredentials: true})
+            let username = await Axios.get(`/user`)
                 .then(res => res.data.username)
                 .catch(err => {
                     this.setState({alert: err.message})
@@ -70,8 +70,7 @@ export default class App extends React.Component {
             this.setLoading(true)
 
             let data = await Axios.get(
-                `/repos?page=${this.state.nextPage}&tags=${this.state.currentSearch.join(',')}`,
-                {withCredentials: true})
+                `/repos?page=${this.state.nextPage}&tags=${this.state.currentSearch.join(',')}`)
                 .then(res => res.data).catch(err => {
                     return []
                 })
@@ -100,7 +99,7 @@ export default class App extends React.Component {
         try {
 
             this.setLoading(true)
-            await Axios.put(`/repos/${author}/${title}`, {tags: tags}, {withCredentials: true})
+            await Axios.put(`/repos/${author}/${title}`, {tags: tags})
                 .catch(err => {
                     console.log(err)
                 })
