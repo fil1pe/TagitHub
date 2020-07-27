@@ -38,7 +38,7 @@ The [TagitHub]'s components have been built using [React.js] and its features. T
 TagInput is a class component with some props (properties):
 
 | prop | Description |
-| —— | —————- |
+| ---- | ----------- |
 | tags | Array gathering the initial tags inside the input. Must be passed by reference! |
 | placeholder | The input's placeholder prop |
 | onEnter(tags) | Event handler for pressing enter or clicking on the button |
@@ -52,7 +52,7 @@ In case the tag array is not passed by reference, the tags prop will be hard to 
 This renders a given repository's information in a post-like component. It's a function with props for the data to be rendered.
 
 | prop | Description |
-| —— | —————- |
+| ---- | ----------- |
 | title | Repository title |
 | description | Repository description |
 | author | Repository author's login |
