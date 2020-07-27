@@ -13,7 +13,7 @@ import ProfileIcon from './components/bootstrap-icons/profile-icon'
 import SearchIcon from './components/bootstrap-icons/search-icon'
 import Loading from './components/Loading'
 
-const serverHost = 'https://tagithub-api.herokuapp.com'
+const serverHost = 'https://tagithub.herokuapp.com'
 const mutex = new Mutex()
 
 export default class App extends React.Component {
