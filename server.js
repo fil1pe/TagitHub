@@ -29,16 +29,33 @@ app.use(session({
 }))
 
 // For MySQL database
-const connection = mysql.createConnection({
-    host: secrets.DB_HOST,
-    port: secrets.DB_PORT,
-    user: secrets.DB_USER,
-    password: secrets.DB_PASSWORD,
-    database: secrets.DB_NAME
-})
-connection.connect((err) => {
-    if (err) throw err
-})
+var connection
+
+function handleDisconnect() {
+    connection = mysql.createConnection({
+        host: secrets.DB_HOST,
+        port: secrets.DB_PORT,
+        user: secrets.DB_USER,
+        password: secrets.DB_PASSWORD,
+        database: secrets.DB_NAME
+    })
+
+    connection.connect((err) => {
+        if (err) {
+            console.log('Error when connecting to database:', err)
+            setTimeout(handleDisconnect, 10000)
+        }
+    })
+
+    connection.on('error', function onError(err) {
+        console.log('Database error:', err)
+        if (err.code == 'PROTOCOL_CONNECTION_LOST')
+            handleDisconnect()
+        else
+            throw err
+    })
+}
+handleDisconnect()
 
 // Authentication
 app.get('/login', (req, res) => {
