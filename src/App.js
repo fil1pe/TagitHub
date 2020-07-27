@@ -134,7 +134,7 @@ export default class App extends React.Component {
 
         // Data from next pages shall be fetched as user scrolls to the bottom
         let onScroll = () => {
-            if ($(window).scrollTop() + $(window).height() === $(document).height())
+            if (Math.ceil(window.innerHeight + window.scrollY) >= document.body.offsetHeight - 45)
                 this.fetchRepos()
         }
         window.addEventListener("scroll", onScroll)
