@@ -179,4 +179,7 @@ app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, 'build', 'index.html'))
 })
 
-app.listen(port)
+app.listen(port, function () {
+    console.log(`Client host: ${clientHosts[0]}`)
+    console.log(`Server running on port ${port}`)
+})
