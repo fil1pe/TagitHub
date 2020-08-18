@@ -151,6 +151,7 @@ CREATE TABLE `repos` (
     `author` VARCHAR(200),
     `avatarURL` VARCHAR(200),
     `tags` TEXT,
+    `page` INT,
     `time` BIGINT,
     PRIMARY KEY (`id`)
 )
